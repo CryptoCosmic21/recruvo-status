@@ -10,11 +10,11 @@
     "uptimeWeek": "100.00%",
     "uptimeMonth": "100.00%",
     "uptimeYear": "100.00%",
-    "time": 776,
-    "timeDay": 776,
-    "timeWeek": 776,
-    "timeMonth": 776,
-    "timeYear": 776,
+    "time": 1238,
+    "timeDay": 1238,
+    "timeWeek": 1238,
+    "timeMonth": 1238,
+    "timeYear": 1238,
     "dailyMinutesDown": {}
   },
   {
@@ -23,18 +23,18 @@
     "icon": "https://icons.duckduckgo.com/ip3/recruvo.gr.ico",
     "slug": "api-health",
     "status": "down",
-    "uptime": "97.84%",
-    "uptimeDay": "97.84%",
-    "uptimeWeek": "97.84%",
-    "uptimeMonth": "97.84%",
-    "uptimeYear": "97.84%",
-    "time": 656,
-    "timeDay": 656,
-    "timeWeek": 656,
-    "timeMonth": 656,
-    "timeYear": 656,
+    "uptime": "64.77%",
+    "uptimeDay": "64.77%",
+    "uptimeWeek": "64.77%",
+    "uptimeMonth": "64.77%",
+    "uptimeYear": "64.77%",
+    "time": 519,
+    "timeDay": 519,
+    "timeWeek": 519,
+    "timeMonth": 519,
+    "timeYear": 519,
     "dailyMinutesDown": {
-      "2026-09-09": 0
+      "2026-09-09": 4
     }
   },
   {
@@ -48,11 +48,11 @@
     "uptimeWeek": "100.00%",
     "uptimeMonth": "100.00%",
     "uptimeYear": "100.00%",
-    "time": 618,
-    "timeDay": 618,
-    "timeWeek": 618,
-    "timeMonth": 618,
-    "timeYear": 618,
+    "time": 516,
+    "timeDay": 516,
+    "timeWeek": 516,
+    "timeMonth": 516,
+    "timeYear": 516,
     "dailyMinutesDown": {}
   }
 ]
