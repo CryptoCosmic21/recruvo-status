@@ -1,7 +1,7 @@
 url: https://recruvo.gr/api/health
-status: up
-code: 200
-responseTime: 643
-lastUpdated: 2026-09-09T20:47:36.189Z
+status: down
+code: 307
+responseTime: 668
+lastUpdated: 2026-09-09T20:55:07.462Z
 startTime: 2026-09-09T20:47:35.545Z
 generator: Upptime <https://github.com/upptime/upptime>
