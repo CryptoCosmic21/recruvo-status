@@ -28,13 +28,24 @@ sites:
   - name: recruvo.gr
     url: https://recruvo.gr/
     slug: recruvo-gr
-    # Upptime's DEFAULT expected-code list includes 301/302/303/307/308 — i.e.
-    # a redirect counts as UP. That is wrong for everything we monitor: this
-    # app's proxy answers an unauthenticated request with a 307 to /auth, so
-    # accepting redirects would report a green page while the app was
-    # unreachable. Every site below pins [200] for that reason.
+    # These two lines are ONE guard and neither half works alone. Upptime's
+    # default expected-code list includes 301/302/303/307/308 — a redirect
+    # counts as UP — and its curl follows up to 3 redirects and grades only the
+    # FINAL code, so pinning [200] on its own changes nothing: an
+    # unauthenticated request that the proxy 307s to /auth lands on a 200 HTML
+    # sign-in page and reports green.
+    #
+    # Measured, not assumed: before /api/health was allowlisted in
+    # src/proxy.ts, the first real check recorded `code: 200` for a route that
+    # did not exist in production
+    # (`curl -sL -w '%{num_redirects} %{url_effective}'` → `1
+    # https://recruvo.gr/auth`).
+    #
+    # So: follow nothing, expect exactly 200. None of the three URLs should
+    # ever redirect — if one starts to, that IS the incident.
     expectedStatusCodes:
       - 200
+    maxRedirects: 0
     # Deliberately loose (the default is 60s). A "degraded" transition opens an
     # issue like a "down" one does, so this threshold is set to catch a real
     # stall, not ordinary SSR variance — measured 0.6–2.2s from Greece.
@@ -52,6 +63,7 @@ sites:
     slug: api-health
     expectedStatusCodes:
       - 200
+    maxRedirects: 0
     maxResponseTime: 10000
 
   # 3. The image pipeline: satori + resvg + the vendored fonts behind
@@ -79,6 +91,7 @@ sites:
     slug: story-card
     expectedStatusCodes:
       - 200
+    maxRedirects: 0
     # Rendering a 1080×1920 PNG is inherently slow (~1.5s warm) and Railway can
     # cold-start underneath it. Wide enough that only a genuine stall trips it.
     maxResponseTime: 30000
