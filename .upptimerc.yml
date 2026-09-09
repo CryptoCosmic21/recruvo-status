@@ -1,31 +1,111 @@
-# Change these first
-owner: upptime # Your GitHub organization or username, where this repository lives
-repo: upptime # The name of this repository
+# Upptime configuration — the SOURCE OF TRUTH for external uptime monitoring.
+#
+# This file is committed to BOTH repositories on purpose:
+#   • CryptoCosmic21/recruvo-status — where it actually runs (Upptime is a
+#     GitHub Actions app; it needs its own repo, its own Issues and its own
+#     Pages site, none of which can live in a product repo without polluting
+#     all three);
+#   • here, in the product repo, so the answer to "what does the monitor
+#     watch, and why those three URLs?" lives next to the code that serves
+#     them. tools/upptime/README.md is the runbook.
+# Edit here first, then copy across (README, step 5) — a monitor that
+# disagrees with the repo it monitors is worse than no monitor.
+#
+# Upptime docs: https://upptime.js.org/docs/configuration
+owner: CryptoCosmic21
+repo: recruvo-status
+
+# Down/degraded transitions open a GitHub issue in the monitor repo. Assigning
+# it is what turns that into an email — there is no notification channel
+# configured (see README "Notifications").
+assignees:
+  - CryptoCosmic21
 
 sites:
-  - name: Google
-    url: https://www.google.com
-  - name: Wikipedia
-    url: https://en.wikipedia.org
-  - name: Hacker News
-    url: https://news.ycombinator.com
-  - name: Secret Site
-    url: $SECRET_SITE
+  # 1. The front door, exactly as a visitor meets it: Cloudflare (proxied since
+  #    2026-08-10) in front of Railway, server-rendering the Greek landing page.
+  #    This is the only check that grades the whole path end to end.
+  - name: recruvo.gr
+    url: https://recruvo.gr/
+    slug: recruvo-gr
+    # Upptime's DEFAULT expected-code list includes 301/302/303/307/308 — i.e.
+    # a redirect counts as UP. That is wrong for everything we monitor: this
+    # app's proxy answers an unauthenticated request with a 307 to /auth, so
+    # accepting redirects would report a green page while the app was
+    # unreachable. Every site below pins [200] for that reason.
+    expectedStatusCodes:
+      - 200
+    # Deliberately loose (the default is 60s). A "degraded" transition opens an
+    # issue like a "down" one does, so this threshold is set to catch a real
+    # stall, not ordinary SSR variance — measured 0.6–2.2s from Greece.
+    maxResponseTime: 10000
+
+  # 2. The process and its database. /api/health is anon-readable through the
+  #    proxy allowlist (src/proxy.ts) and does one anon SELECT on `businesses`
+  #    before answering, so this check goes red on the failure mode that
+  #    otherwise stays invisible: anon reads dying while every signed-in page
+  #    still renders (an RLS policy referencing a column outside anon's
+  #    curated grant — migrations 0123/0124). It answers 503, never a 200 with
+  #    a sad body, so the status line alone is the signal.
+  - name: API health
+    url: https://recruvo.gr/api/health
+    slug: api-health
+    expectedStatusCodes:
+      - 200
+    maxResponseTime: 10000
+
+  # 3. The image pipeline: satori + resvg + the vendored fonts behind
+  #    ImageResponse, which is the machinery every share card and every OG link
+  #    preview depends on and which has its own standing failure mode (a
+  #    sharp/libvips version clash takes the render — historically the whole
+  #    process — down).
+  #
+  #    The all-zeros UUID is not a placeholder, it is the point: the route
+  #    degrades a missing entity to a generic branded card, still 200, so this
+  #    URL exercises fonts + render + PNG encode and NOTHING else. Pointing it
+  #    at a real business would look like better coverage and not be any: a
+  #    deleted or unapproved row falls back to the same generic card and still
+  #    answers 200, so the data path would be untested either way — while a
+  #    real card costs 1.6 MB of Railway egress per check (~460 MB/day at
+  #    5-minute intervals) against 59 KB for this one. The data path is
+  #    covered by /api/health above.
+  #
+  #    Known limit, stated rather than papered over: if the renderer throws,
+  #    the route's last-resort branch still returns a 1×1 PNG at 200 and this
+  #    check stays green. It catches the crash/timeout/5xx shape of failure,
+  #    not a silently blank card.
+  - name: Story-card renderer
+    url: https://recruvo.gr/api/story-card/business/00000000-0000-0000-0000-000000000000
+    slug: story-card
+    expectedStatusCodes:
+      - 200
+    # Rendering a 1080×1920 PNG is inherently slow (~1.5s warm) and Railway can
+    # cold-start underneath it. Wide enough that only a genuine stall trips it.
+    maxResponseTime: 30000
 
 status-website:
-  # Add your custom domain name, or remove the `cname` line if you don't have a domain
-  # Uncomment the `baseUrl` line if you don't have a custom domain and add your repo name there
-  cname: demo.upptime.js.org
-  # baseUrl: /your-repo-name
-  logoUrl: https://raw.githubusercontent.com/upptime/upptime.js.org/master/static/img/icon.svg
-  name: Upptime
-  introTitle: "**Upptime** is the open-source uptime monitor and status page, powered entirely by GitHub."
-  introMessage: This is a sample status page which uses **real-time** data from our [GitHub repository](https://github.com/upptime/upptime). No server required — just GitHub Actions, Issues, and Pages. [**Get your own for free**](https://github.com/upptime/upptime)
+  # No custom domain: the site is served from
+  # https://cryptocosmic21.github.io/recruvo-status/ and sapper needs the
+  # sub-path at build time or every asset 404s. If a `status.recruvo.gr` CNAME
+  # is ever added, `cname:` replaces this line (see README).
+  baseUrl: /recruvo-status
+  name: Recruvo Status
+  # English on purpose, and worth being explicit about: AGENTS.md requires
+  # member-facing copy to be Greek, researched not reasoned. This page is an
+  # ops artifact on a github.io URL, not a product surface. If it is ever
+  # linked from recruvo.gr or moved to status.recruvo.gr, it becomes one —
+  # translate the strings here (and Upptime's `i18n:` block) FIRST.
+  introTitle: "Live and historical availability for **Recruvo**"
+  introMessage: Automated checks every 5 minutes from GitHub Actions, independent of Recruvo's own infrastructure. Incidents are filed as issues in this repository.
   navbar:
     - title: Status
       href: /
-    - title: GitHub
-      href: https://github.com/$OWNER/$REPO
+    - title: Recruvo
+      href: https://recruvo.gr
 
-# Upptime also supports notifications, assigning issues, and more
-# See https://upptime.js.org/docs/configuration
+# Exact contextual-secret allowlist. Present and empty = authoritative: the
+# generated workflows plumb NO secrets through to the action, because this
+# setup needs none (the workflows fall back to the automatic GITHUB_TOKEN).
+# Adding a notification channel means adding its variable name here as well as
+# setting the repository secret — see README "Notifications".
+secrets: []
