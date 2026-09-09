@@ -30,10 +30,14 @@ With [Upptime](https://upptime.js.org), you can get your own unlimited and free 
 | **API health**          | `/api/health`                         | The Node process is serving **and** an anonymous `SELECT` on `businesses` still succeeds — the automated version of the sitemap `<loc>` canary. Answers `503`, not a sad `200`.                                                                                |
 | **Story-card renderer** | `/api/story-card/business/00000000-…` | The `ImageResponse` pipeline (satori + resvg + vendored fonts) that every share card and link preview depends on. The all-zeros UUID is deliberate: the route degrades a missing entity to a generic card, so this check exercises rendering and nothing else. |
 
-Every check pins `expectedStatusCodes: [200]`. Upptime's default list counts a
-**307 as up**, and recruvo.gr's proxy answers unauthenticated requests with a
-307 to `/auth` — so the defaults would have reported a green status page for an
-app nobody could reach.
+Every check pins `expectedStatusCodes: [200]` **and** `maxRedirects: 0`, and it
+takes both. Upptime's default expected-code list counts a 307 as up, and its
+curl follows redirects and grades only the final code — so with either half
+missing, an unauthenticated request that recruvo.gr's proxy 307s to `/auth`
+lands on a 200 sign-in page and reports green. The first check taken here
+recorded exactly that: `code: 200` for `/api/health`, a route that was not
+deployed yet. None of these three URLs should ever redirect; if one starts to,
+that is the incident.
 
 ## Ground rules for this repository
 
