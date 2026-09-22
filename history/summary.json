@@ -10,11 +10,11 @@
     "uptimeWeek": "100.00%",
     "uptimeMonth": "100.00%",
     "uptimeYear": "100.00%",
-    "time": 662,
-    "timeDay": 424,
-    "timeWeek": 480,
-    "timeMonth": 662,
-    "timeYear": 662,
+    "time": 644,
+    "timeDay": 370,
+    "timeWeek": 476,
+    "timeMonth": 644,
+    "timeYear": 644,
     "dailyMinutesDown": {}
   },
   {
@@ -23,20 +23,17 @@
     "icon": "https://icons.duckduckgo.com/ip3/recruvo.gr.ico",
     "slug": "api-health",
     "status": "up",
-    "uptime": "98.64%",
+    "uptime": "100.00%",
     "uptimeDay": "100.00%",
     "uptimeWeek": "100.00%",
-    "uptimeMonth": "98.64%",
-    "uptimeYear": "98.64%",
-    "time": 329,
-    "timeDay": 197,
-    "timeWeek": 260,
-    "timeMonth": 329,
-    "timeYear": 329,
-    "dailyMinutesDown": {
-      "2026-09-10": 36,
-      "2026-09-09": 185
-    }
+    "uptimeMonth": "100.00%",
+    "uptimeYear": "100.00%",
+    "time": 320,
+    "timeDay": 181,
+    "timeWeek": 251,
+    "timeMonth": 320,
+    "timeYear": 320,
+    "dailyMinutesDown": {}
   },
   {
     "name": "Story-card renderer",
@@ -49,11 +46,11 @@
     "uptimeWeek": "100.00%",
     "uptimeMonth": "100.00%",
     "uptimeYear": "100.00%",
-    "time": 364,
-    "timeDay": 201,
-    "timeWeek": 256,
-    "timeMonth": 364,
-    "timeYear": 364,
+    "time": 353,
+    "timeDay": 185,
+    "timeWeek": 240,
+    "timeMonth": 353,
+    "timeYear": 353,
     "dailyMinutesDown": {}
   }
 ]
